@@ -32,7 +32,10 @@ df['OGPoly'] = df["OG"] + df['OG'] ** 2
 
 new_len = len(df)
 one_hot = pd.get_dummies(df[["StyleID"]], columns=["StyleID"])
+df = df.drop(columns=["StyleID"])
 df = df.join(one_hot)
+
+print(df)
 
 df_X = df.drop(columns=["ABV", "IBU"])
 df_X_IBU = df.drop(columns=['ABV', 'IBU'])
