@@ -1,12 +1,12 @@
 # Projet IA
 
-## Collaborator
+## Collaborateurs
 
  - BASKA Benjamin
  - GUILLON Antonin
  - HOTTON Robin
 
-## Créer les models
+## Créer les modèles
 
 Lancer le fichier our_regressor.py pour générer les modèles.
 Ensuite, vous pouvez tester avec try_models.py.
