@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <title>Formulaire</title>
+</head>
+
+<!-- 'StyleID', 'Size(L)', 'OG', 'BoilSize', 'BoilTime', 'BoilGravity', 'Efficiency' -->
+
+<body>
+    <h1>Formulaire</h1>
+    <form method="POST" action="/">
+        <label for="style">Style :</label>
+        <select id="style" name="style">
+            {% for beer_style in beers_style %}
+            <option value="{{ beer_style }}" {% if beer_style==style %}selected{% endif %}>{{ beer_style }}</option>
+            {% endfor %}
+        </select><br><br>
+    
+        <label for="size_l">Size(L) :</label>
+        <input type="text" id="size_l" name="size_l" value="{{ size_l }}" required><br><br>
+    
+        <label for="og">OG :</label>
+        <input type="text" id="og" name="og" value="{{ og }}" required><br><br>
+    
+        <label for="boil_size">BoilSize :</label>
+        <input type="text" id="boil_size" name="boil_size" value="{{ boil_size }}" required><br><br>
+    
+        <label for="boil_time">BoilTime :</label>
+        <input type="text" id="boil_time" name="boil_time" value="{{ boil_time }}" required><br><br>
+    
+        <label for="boil_gravity">BoilGravity :</label>
+        <input type="text" id="boil_gravity" name="boil_gravity" value="{{ boil_gravity }}" required><br><br>
+    
+        <label for="efficiency">Efficiency :</label>
+        <input type="text" id="efficiency" name="efficiency" value="{{ efficiency }}" required><br><br>
+    
+        <input type="submit" value="Envoyer">
+    </form>
+
+
+</body>
+
+</html>
