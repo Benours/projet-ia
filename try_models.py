@@ -23,11 +23,13 @@ df = df[df["BoilSize"] <= df["BoilSize"].quantile(0.95)]
 df['OGPoly'] = df["OG"] + df['OG'] ** 2
 
 # Encode categorical variables
+new_len = len(df)
 one_hot = pd.get_dummies(df[["StyleID"]], columns=["StyleID"])
+df = df.join(one_hot)
 
 # Prepare data for ABV and IBU prediction
 df_X = df.drop(columns=["ABV", "IBU"])
-df_X_IBU = df.drop(columns=['Size(L)', 'ABV', 'IBU', 'BoilSize', 'BoilTime'])
+df_X_IBU = df.drop(columns=['ABV', 'IBU'])
 df_y_ABV = df["ABV"]
 df_y_IBU = df["IBU"]
 

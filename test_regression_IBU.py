@@ -31,11 +31,15 @@ df = df[df["BoilSize"] <= df["BoilSize"].quantile(0.95)]
 df['OG2'] = df['OG'] ** 2
 
 new_len = len(df)
-# print(new_len / orig_leng)
 one_hot = pd.get_dummies(df[["StyleID"]], columns=["StyleID"])
+df = df.join(one_hot)
+df = df.drop(
+    columns=["StyleID"]
+)
 
 df_X = df.drop(columns=["ABV", "IBU"])
-df_X_IBU = df.drop(columns=['Size(L)', 'ABV', 'IBU', 'BoilSize', 'BoilTime'])
+# df_X_IBU = df.drop(columns=['Size(L)', 'ABV', 'IBU', 'BoilSize', 'BoilTime'])
+df_X_IBU = df.drop(columns=['ABV', 'IBU'])
 df_y = df[["ABV", "IBU"]]
 df_y_ABV = df["ABV"]
 df_y_IBU = df["IBU"]
@@ -57,34 +61,31 @@ print("Erreur MSE RM_IBU :", mean_squared_error(y_test_IBU, regm_IBU.predict(X_t
 print("Erreur MSE RA_ABV :", mean_squared_error(y_test_ABV, regr_ABV.predict(X_test_ABV)))
 print("Erreur MSE RA_IBU :", mean_squared_error(y_test_IBU, regr_IBU.predict(X_test_IBU)))
 """
-"""
 # Define the hyperparameter grids for each model
-param_grid_lr = {
-    'fit_intercept': [True, False],
+param_grid_rf = {
+    'n_estimators': range(150, 250, 20),
+    'min_samples_split': range(6, 22, 2),
 }
 
-param_grid_rf = {
-    'min_samples_split': range(19, 25),
-}
-"""
 # Split the data into training and testing sets
 X_train_IBU, X_test_IBU, y_train_IBU, y_test_IBU = train_test_split(df_X_IBU, df_y_IBU)
 
 # Create the models
-lr = LinearRegression(fit_intercept=True)
-rf = RandomForestRegressor(min_samples_leaf=4, max_depth=14, n_estimators=300, min_samples_split=24)
-"""
+rf = RandomForestRegressor(max_features='log2', min_samples_split=14, n_estimators=230)
+
 # Create HalvingGridSearchCV instances for each model
-search_lr = HalvingGridSearchCV(lr, param_grid_lr, scoring='neg_mean_squared_error', n_jobs=-1, factor=3, verbose=2)
-search_rf = HalvingGridSearchCV(rf, param_grid_rf, scoring='neg_mean_squared_error', n_jobs=-1, factor=3, verbose=2)
-"""
+search_rf = HalvingGridSearchCV(rf, param_grid_rf, scoring='neg_mean_squared_error', n_jobs=-1)
+
 # Fit the models with hyperparameter tuning
-lr.fit(X_train_IBU, y_train_IBU)
-rf.fit(X_train_IBU, y_train_IBU)
+search_rf.fit(X_train_IBU, y_train_IBU)
+
+# Get the best models with optimized hyperparameters
+best_rf = search_rf.best_estimator_
+
+print("Best parameters :", best_rf)
 
 # Evaluate the models
-mse_lr = mean_squared_error(y_test_IBU, lr.predict(X_test_IBU))
-mse_rf = mean_squared_error(y_test_IBU, rf.predict(X_test_IBU))
+mse_rf = mean_squared_error(y_test_IBU, best_rf.predict(X_test_IBU))
 
-print("Best Linear Regression MSE:", mse_lr)
 print("Best Random Forest MSE:", mse_rf)
+
