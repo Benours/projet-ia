@@ -28,7 +28,7 @@ def formulaire():
             'BoilTime': [boil_time],
             'BoilGravity': [boil_gravity],
             'Efficiency': [efficiency],
-            'OGPoly': [int(og) + int(og) ** 2],  # Vous avez mentionné 'OG2' dans votre question, nous allons utiliser OG^2 comme exemple
+            'OGPoly': [float(og) + float(og) ** 2],  # Vous avez mentionné 'OG2' dans votre question, nous allons utiliser OG^2 comme exemple
         }
   
 
