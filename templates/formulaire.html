@@ -38,6 +38,16 @@
         <input type="submit" value="Envoyer">
     </form>
 
+    {% if y_pred_ABV %}
+        <br/>
+        <label> Prédiction ABV : {{ y_pred_ABV }}</label>
+    {% endif %}
+    {% if y_pred_IBU %}
+        <br/>
+        <label> Prédiction IBU : {{ y_pred_IBU }}</label>
+    {% endif %}
+
+
 
 </body>
 
