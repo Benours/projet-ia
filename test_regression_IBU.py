@@ -37,41 +37,46 @@ df = df.drop(
     columns=["StyleID"]
 )
 
-df_X = df.drop(columns=["ABV", "IBU"])
-# df_X_IBU = df.drop(columns=['Size(L)', 'ABV', 'IBU', 'BoilSize', 'BoilTime'])
+df_X_ABV = df.drop(columns=["ABV", "IBU"])
 df_X_IBU = df.drop(columns=['ABV', 'IBU'])
-df_y = df[["ABV", "IBU"]]
 df_y_ABV = df["ABV"]
 df_y_IBU = df["IBU"]
 """
-X_train_ABV, X_test_ABV, y_train_ABV, y_test_ABV = train_test_split(df_X, df_y_ABV)
+X_train_ABV, X_test_ABV, y_train_ABV, y_test_ABV = train_test_split(df_X_ABV, df_y_ABV)
 X_train_IBU, X_test_IBU, y_train_IBU, y_test_IBU = train_test_split(df_X_IBU, df_y_IBU)
 
 reg_ABV = LinearRegression().fit(X_train_ABV, y_train_ABV)
 reg_IBU = LinearRegression().fit(X_train_IBU, y_train_IBU)
-regm_ABV = MLPRegressor(hidden_layer_sizes=(25, 25, 25), max_iter=500).fit(X_train_ABV, y_train_ABV)
-regm_IBU = MLPRegressor(hidden_layer_sizes=(25, 25, 25), max_iter=500).fit(X_train_IBU, y_train_IBU)
+regm_ABV = MLPRegressor(hidden_layer_sizes=(100, ), max_iter=500).fit(X_train_ABV, y_train_ABV)
+regm_IBU = MLPRegressor(hidden_layer_sizes=(100, ), max_iter=500).fit(X_train_IBU, y_train_IBU)
 regr_ABV = RandomForestRegressor().fit(X_train_ABV, y_train_ABV)
 regr_IBU = RandomForestRegressor().fit(X_train_IBU, y_train_IBU)
 
-print("Erreur MSE RL_ABV :", mean_squared_error(y_test_ABV, reg_ABV.predict(X_test_ABV)))
-print("Erreur MSE RL_IBU :", mean_squared_error(y_test_IBU, reg_IBU.predict(X_test_IBU)))
-print("Erreur MSE RM_ABV :", mean_squared_error(y_test_ABV, regm_ABV.predict(X_test_ABV)))
-print("Erreur MSE RM_IBU :", mean_squared_error(y_test_IBU, regm_IBU.predict(X_test_IBU)))
-print("Erreur MSE RA_ABV :", mean_squared_error(y_test_ABV, regr_ABV.predict(X_test_ABV)))
-print("Erreur MSE RA_IBU :", mean_squared_error(y_test_IBU, regr_IBU.predict(X_test_IBU)))
+# print("Erreur MSE RL_ABV :", mean_squared_error(y_test_ABV, reg_ABV.predict(X_test_ABV)))
+# print("Erreur MSE RL_IBU :", mean_squared_error(y_test_IBU, reg_IBU.predict(X_test_IBU)))
+print("Erreur MSE RL_ABV :", mean_squared_error(y_test_ABV, regm_ABV.predict(X_test_ABV)))
+print("Erreur MSE RL_IBU :", mean_squared_error(y_test_IBU, regm_IBU.predict(X_test_IBU)))
+print("Erreur MSE RM_ABV :", mean_squared_error(y_test_ABV, regr_ABV.predict(X_test_ABV)))
+print("Erreur MSE RM_IBU :", mean_squared_error(y_test_IBU, regr_IBU.predict(X_test_IBU)))
+print("Erreur MSE RA_ABV :", mean_squared_error(y_test_ABV, reg_ABV.predict(X_test_ABV)))
+print("Erreur MSE RA_IBU :", mean_squared_error(y_test_IBU, reg_IBU.predict(X_test_IBU)))
+
+
 """
-# Define the hyperparameter grids for each model
+
 param_grid_rf = {
-    'n_estimators': range(150, 250, 20),
-    'min_samples_split': range(6, 22, 2),
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4],
+    'max_features': [None, 'sqrt', 'log2']
 }
 
 # Split the data into training and testing sets
 X_train_IBU, X_test_IBU, y_train_IBU, y_test_IBU = train_test_split(df_X_IBU, df_y_IBU)
 
 # Create the models
-rf = RandomForestRegressor(max_features='log2', min_samples_split=14, n_estimators=230)
+rf = RandomForestRegressor()
 
 # Create HalvingGridSearchCV instances for each model
 search_rf = HalvingGridSearchCV(rf, param_grid_rf, scoring='neg_mean_squared_error', n_jobs=-1)
@@ -81,8 +86,6 @@ search_rf.fit(X_train_IBU, y_train_IBU)
 
 # Get the best models with optimized hyperparameters
 best_rf = search_rf.best_estimator_
-
-print("Best parameters :", best_rf)
 
 # Evaluate the models
 mse_rf = mean_squared_error(y_test_IBU, best_rf.predict(X_test_IBU))

@@ -10,9 +10,6 @@ pd.set_option('display.expand_frame_repr', False)
 
 df = pd.read_csv("./beers/recipeData.csv", encoding="latin1")
 
-print(df.dtypes)
-
-
 # Drop unnecessary columns
 columns_to_drop = ["BeerID", "UserId", "URL", "Name", "Style", "PrimingMethod", "PrimingAmount", "PitchRate", "MashThickness",
                    "PrimaryTemp", "SugarScale", "FG", "Color", "BrewMethod"]
